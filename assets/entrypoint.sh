@@ -48,10 +48,11 @@ case "${1:-}" in
 
 		cat /usr/lib/ssl/openssl.cnf > /tmp/openssl.cnf
 		cat >> /tmp/openssl.cnf << EOS
+
 [alt_names]
 DNS.1 = $COMMON_NAME
-EOS
 
+EOS
 		openssl genrsa 2048 > certs/$COMMON_NAME/privkey.pem
 
 		openssl req -config /tmp/openssl.cnf -new \
@@ -59,11 +60,12 @@ EOS
 		  -out certs/$COMMON_NAME/req.pem \
 		  -subj "/CN=$COMMON_NAME/C=$SSL_C/ST=$SSL_ST/L=$SSL_L/O=$SSL_OR"
 
-		openssl ca \
+		openssl ca -config /tmp/openssl.cnf \
 		  -out ./certs/$COMMON_NAME/cert.pem \
 		  -infiles ./certs/$COMMON_NAME/req.pem
 
 		openssl x509 -in ./certs/$COMMON_NAME/cert.pem -text
+
 		;;
 
 	"dhparam" )
